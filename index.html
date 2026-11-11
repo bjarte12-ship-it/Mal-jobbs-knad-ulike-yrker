@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jobbsøknad – interaktiv mal</title>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1f2933;--mute:#617080;--line:#d9d5cb;--accent:#1f6f5c;--accent-ink:#fff;--chip:#eef3f0;--paper:#fff;--paper-ink:#1f2933;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15191c;--card:#1f2529;--ink:#e8ecef;--mute:#9aa7b2;--line:#34404a;--accent:#4fb89c;--accent-ink:#0b1713;--chip:#26312d}}
+:root[data-theme="dark"]{--bg:#15191c;--card:#1f2529;--ink:#e8ecef;--mute:#9aa7b2;--line:#34404a;--accent:#4fb89c;--accent-ink:#0b1713;--chip:#26312d}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:20px 20px 4px;max-width:1200px;margin:0 auto}
+h1{font-size:22px;margin:0 0 2px}header p{margin:0;color:var(--mute)}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;padding:16px 20px 40px;max-width:1200px;margin:0 auto}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.card h2{font-size:15px;margin:0 0 10px}
+label{display:block;font-size:13px;color:var(--mute);margin:10px 0 3px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:70px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.hint{font-size:12.5px;color:var(--mute);margin:4px 0 0}
+.sticky{position:sticky;top:env(safe-area-inset-top,0px)}
+.paper{background:var(--paper);color:var(--paper-ink);border:1px solid var(--line);border-radius:6px;padding:28px 30px;font:14px/1.55 Calibri,Carlito,system-ui,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.08);max-height:75vh;overflow:auto}
+.paper p{margin:0 0 10px}.paper .ph{color:#b0692a}.paper h3{font-size:16px;margin:14px 0 10px}
+.paper .gap{height:12px}
+button.primary{width:100%;margin-top:12px;padding:12px;border:0;border-radius:10px;background:var(--accent);color:var(--accent-ink);font:inherit;font-weight:600;cursor:pointer}
+.jobs{margin-top:12px;padding:12px;border:1px dashed var(--accent);border-radius:10px;display:flex;flex-direction:column;gap:6px}.jobs a{color:var(--accent);font-weight:600;text-decoration:none}.jobs a:hover{text-decoration:underline}
+#msg{font-size:13px;margin-top:8px;color:var(--mute);min-height:1.2em}
+</style>
+</head>
+<body>
+<header><h1>Jobbsøknad – interaktiv mal</h1><p>Velg yrke, fyll ut feltene og se søknaden bli skrevet underveis. Last ned som Word når du er ferdig.</p></header>
+<main>
+<section>
+  <div class="card"><h2>1. Velg yrke</h2>
+    <select id="occ"></select>
+    <label>Stillingstittel (kan endres)</label><input id="title">
+    <p class="hint">Når du velger yrke, får du forslag til egenskaper og arbeidsoppgaver nedenfor.</p>
+    <div class="jobs"><strong id="jobtxt">Finn ledige stillinger</strong>
+      <a id="lA" target="_blank" rel="noopener noreferrer">Se stillinger på arbeidsplassen.no ↗</a>
+      <a id="lF" target="_blank" rel="noopener noreferrer">Se stillinger på finn.no ↗</a>
+      <p class="hint">Lenkene åpner søk etter ledige stillinger i Molde. Velg en annonse, og skriv inn bedriften og hvor du fant den i feltene under.</p></div>
+  </div>
+  <div class="card"><h2>Personalia</h2>
+    <div class="row"><div><label>Fornavn</label><input id="fn" autocomplete="given-name"></div><div><label>Etternavn</label><input id="ln" autocomplete="family-name"></div></div>
+    <label>Adresse</label><input id="adr" autocomplete="street-address">
+    <div class="row"><div><label>Postnummer</label><input id="zip" autocomplete="postal-code"></div><div><label>Sted</label><input id="city" autocomplete="address-level2"></div></div>
+    <div class="row"><div><label>Telefon</label><input id="tel" type="tel"></div><div><label>E-post</label><input id="mail" type="email"></div></div>
+  </div>
+  <div class="card"><h2>Arbeidsgiver</h2>
+    <label>Navn på bedrift</label><input id="co">
+    <label>Kontaktperson (hvis du vet)</label><input id="cp">
+    <label>Adresse</label><input id="cadr">
+    <div class="row"><div><label>Postnummer og sted</label><input id="czip"></div><div><label>Sted og dato i brevet</label><input id="place" value="Molde"><input id="date" type="date" style="margin-top:6px"></div></div>
+    <label>Hvor fant du annonsen?</label><input id="src" list="srcs" placeholder="f.eks. arbeidsplassen.no">
+    <datalist id="srcs"><option value="arbeidsplassen.no"><option value="Finn.no"><option value="Molde kommune, ledige stillinger"><option value="NAV"></datalist>
+  </div>
+  <div class="card"><h2>Om meg selv</h2>
+    <label>Hva gjør du nå?</label><input id="act" list="acts" placeholder="Velg eller skriv selv">
+    <datalist id="acts"><option value="er deltaker på norskkurs"><option value="er deltaker i Jobbsjansen"><option value="er hjemmeværende"><option value="deltar på frivillig arbeid"><option value="jobber som …"></datalist>
+    <div class="row"><div><label>Kom til Norge i (år)</label><input id="yr" inputmode="numeric"></div><div><label>Om familie (valgfritt)</label><input id="fam" placeholder="Jeg er gift og har to barn."></div></div>
+    <label>Hva ber annonsen om? (valgfritt)</label><input id="ad" placeholder="f.eks. serviceinnstilt og punktlig">
+  </div>
+  <div class="card"><h2>Erfaring og utdanning</h2>
+    <label>Tidligere jobber</label><textarea id="prev" placeholder="f.eks. renholder i 2 år i hjemlandet"></textarea>
+    <label>Jeg har erfaring med</label><textarea id="exp" placeholder="relevante oppgaver eller ferdigheter"></textarea>
+    <label>Utdanning</label><input id="edu" placeholder="f.eks. sykepleier / videregående skole">
+  </div>
+  <div class="card"><h2>Hvorfor jeg passer til jobben</h2>
+    <label>Egenskaper (velg flere, eller legg til egne)</label><div class="chips" id="qc"></div>
+    <input id="qadd" placeholder="Skriv egen egenskap og trykk Enter" style="margin-top:8px">
+    <label>Arbeidsoppgaver jeg liker å jobbe med</label><div class="chips" id="tc"></div>
+    <input id="tadd" placeholder="Skriv egen oppgave og trykk Enter" style="margin-top:8px">
+  </div>
+  <div class="card"><h2>Avslutning</h2>
+    <label>Tillegg før avslutningen (kan slettes)</label>
+    <textarea id="end">Jobbsjansen har fokus på muntlig og skriftlig arbeidsnorsk, arbeidslivskunnskap, digitale ferdigheter og praksis.</textarea>
+  </div>
+</section>
+<aside><div class="sticky">
+  <div class="card"><h2>Forhåndsvisning</h2><div class="paper" id="paper"></div>
+  <button class="primary" id="dl">Last ned som Word (.docx)</button><div id="msg"></div></div>
+</div></aside>
+</main>
+<script>
+var OCC={
+"Assistent i helse og omsorg":{q:["omsorgsfull","tålmodig","pålitelig","samarbeidsvillig","respektfull"],t:["pleie og omsorg","hjelp med personlig hygiene","matlaging og måltider","aktiviteter og sosialt samvær med brukere","praktisk hjelp og rydding"]},
+"Barnehageassistent":{q:["tålmodig","leken","omsorgsfull","ansvarsfull","samarbeidsvillig"],t:["lek og aktiviteter med barn","måltider og stell","å skape trygghet og samspill","tid ute sammen med barna","rydding og praktiske oppgaver"]},
+"Renholder":{q:["nøyaktig","pålitelig","effektiv","ryddig","punktlig"],t:["rengjøring av kontor og fellesarealer","vask av gulv og sanitæranlegg","bruk av rengjøringsmidler og maskiner","orden og hygiene"]},
+"Butikkmedarbeider":{q:["serviceinnstilt","blid","pålitelig","fleksibel","punktlig"],t:["kundebetjening","kassearbeid","påfylling og plassering av varer","å holde butikken ryddig"]},
+"Kjøkkenassistent":{q:["effektiv","ryddig","stressmestrende","samarbeidsvillig","pålitelig"],t:["matlaging og forberedelser","oppvask og renhold","hygiene og kjøkkenrutiner","servering"]},
+"Lagermedarbeider":{q:["nøyaktig","punktlig","ansvarsfull","strukturert","fleksibel"],t:["plukking og pakking","varemottak","orden og systematikk på lager","fysisk arbeid"]},
+"Vaktmester / driftsassistent":{q:["praktisk","løsningsorientert","selvstendig","pålitelig","ryddig"],t:["vedlikehold og små reparasjoner","utendørs arbeid og snømåking","tilsyn med bygg","å hjelpe andre"]},
+"Frisør":{q:["kreativ","serviceinnstilt","nøyaktig","blid","punktlig"],t:["klipp og styling","hårfarging","kundebetjening og rådgivning","hygiene og renhold av salongen","timebestilling og kasse"]},
+"Økonomimedarbeider":{q:["nøyaktig","strukturert","pålitelig","ansvarsfull","løsningsorientert"],t:["føring av regnskap","fakturering og betalinger","bilagshåndtering","bruk av Excel og regnskapssystemer","kontroll og avstemming"]},
+"Ambulansearbeider / paramedic":{q:["stressmestrende","ansvarsfull","rolig","samarbeidsvillig","pålitelig"],t:["akutt førstehjelp og pasientbehandling","transport av pasienter","samarbeid med lege og helsepersonell","bruk av medisinsk utstyr","vurdering og prioritering ved akutte hendelser"]},
+"Farmasøyt":{q:["nøyaktig","ansvarsfull","serviceinnstilt","faglig sterk","pålitelig"],t:["rådgivning og veiledning til kunder","utlevering og kontroll av resepter","legemiddelkunnskap","kvalitetssikring og dokumentasjon","samarbeid med lege og helsepersonell"]},
+"Annen stilling":{q:["pålitelig","samarbeidsvillig","lærevillig","fleksibel","punktlig"],t:["samarbeid med kolleger","praktiske oppgaver","kundekontakt","å lære nye ting"]}};
+var $=function(i){return document.getElementById(i)};
+var sel={q:new Set(),t:new Set()},pool={q:[],t:[]};
+var occ=$("occ");Object.keys(OCC).forEach(function(k){var o=document.createElement("option");o.textContent=k;occ.appendChild(o)});
+var d=new Date();$("date").value=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function chips(kind,box){var el=$(box);el.textContent="";pool[kind].forEach(function(x){var b=document.createElement("button");b.type="button";b.className="chip";b.textContent=x;b.setAttribute("aria-pressed",sel[kind].has(x));b.onclick=function(){sel[kind].has(x)?sel[kind].delete(x):sel[kind].add(x);chips(kind,box);render()};el.appendChild(b)})}
+function pick(){var o=OCC[occ.value];$("title").value=occ.value==="Annen stilling"?"":occ.value.toLowerCase();pool.q=o.q.slice();pool.t=o.t.slice();sel.q=new Set(o.q.slice(0,3));sel.t=new Set(o.t.slice(0,2));chips("q","qc");chips("t","tc");render()}
+function adder(inp,kind,box){$(inp).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();var v=this.value.trim();if(v){if(pool[kind].indexOf(v)<0)pool[kind].push(v);sel[kind].add(v);this.value="";chips(kind,box);render()}}})}
+adder("qadd","q","qc");adder("tadd","t","tc");
+function v(i){return $(i).value.trim()}
+function ph(x,p){return x||"["+p+"]"}
+function list(a){a=Array.from(a);if(a.length<2)return a.join("");return a.slice(0,-1).join(", ")+" og "+a[a.length-1]}
+function fdate(s){if(!s)return"[dato]";var p=s.split("-");return p[2]+"."+p[1]+"."+p[0]}
+function build(){
+var name=ph((v("fn")+" "+v("ln")).trim(),"Fornavn Etternavn"),b=[];
+b.push({t:"lines",l:[name,ph(v("adr"),"Adresse"),ph((v("zip")+" "+v("city")).trim(),"Postnummer og sted"),ph(v("tel"),"Telefonnummer"),ph(v("mail"),"E-postadresse")]});
+b.push({t:"gap"});
+b.push({t:"lines",l:[ph(v("co"),"Navn på bedrift"),v("cp")?"Att: "+v("cp"):"",ph(v("cadr"),"Adresse"),ph(v("czip"),"Postnummer og sted")].filter(Boolean)});
+b.push({t:"gap"});
+b.push({t:"lines",l:[(v("place")||"Molde")+", "+fdate($("date").value)]});
+var title=ph(v("title"),"stillingstittel");
+b.push({t:"h",x:"Søknad på stilling som "+title});
+b.push({t:"p",x:"Jeg, "+name+", søker på stillingen som "+title+". Jeg fant annonsen på "+ph(v("src"),"hvor du fant annonsen")+"."});
+var about="Jeg heter "+ph(v("fn"),"fornavn")+", og jeg "+ph(v("act"),"hva du gjør nå")+".";
+if(v("yr"))about+=" Jeg kom til Norge i "+v("yr")+".";
+if(v("fam"))about+=" "+v("fam").replace(/\s*$/,/[.!]$/.test(v("fam"))?"":".");
+about+=" Jeg er en positiv og motivert person som liker å lære nye ting.";
+if(v("ad"))about+=" I annonsen legger dere vekt på "+v("ad")+", og det passer godt med meg.";
+b.push({t:"p",x:about});
+var ex=[];
+if(v("prev"))ex.push("Tidligere har jeg jobbet som "+v("prev").replace(/[.\s]+$/,"")+".");
+if(v("exp"))ex.push("Jeg har erfaring med "+v("exp").replace(/[.\s]+$/,"")+".");
+if(v("edu"))ex.push("Jeg er utdannet som "+v("edu").replace(/[.\s]+$/,"")+".");
+b.push({t:"p",x:ex.length?ex.join(" "):"[Skriv kort om tidligere erfaring og utdanning]"});
+var why="Jeg tror jeg passer godt til denne jobben fordi jeg er "+(sel.q.size?list(sel.q):"[egenskaper]")+". Jeg liker å jobbe med "+(sel.t.size?list(sel.t):"[arbeidsoppgaver]")+", og jeg ønsker å bidra positivt på arbeidsplassen.";
+b.push({t:"p",x:why});
+if(v("end"))b.push({t:"p",x:v("end")});
+b.push({t:"p",x:"Jeg håper dere vil vurdere min søknad. Jeg kan komme på intervju når det passer dere."});
+b.push({t:"p",x:"Med vennlig hilsen"});
+b.push({t:"p",x:name});
+return b}
+var SQ={"Assistent i helse og omsorg":"helsefagarbeider","Barnehageassistent":"barnehageassistent","Vaktmester / driftsassistent":"vaktmester","Ambulansearbeider / paramedic":"ambulansearbeider"};
+function links(){var q=SQ[occ.value]||v("title")||(occ.value==="Annen stilling"?"":occ.value.toLowerCase());var e=encodeURIComponent(q+" Molde").replace(/%20/g,"+");
+var base="https://arbeidsplassen.nav.no/stillinger?county=M%C3%98RE+OG+ROMSDAL&v=6&municipal=M%C3%98RE+OG+ROMSDAL.MOLDE";
+var APX={"Assistent i helse og omsorg":"&occupationLevel1=Helse+og+sosial&occupationLevel2=Helse+og+sosial.Hjemmehjelper+og+personlig+assistent&occupationLevel2=Helse+og+sosial.Andre+helseyrker","Frisør":"&q=fris%C3%B8r&occupationLevel1=Salg+og+service&occupationLevel2=Salg+og+service.Fris%C3%B8r+og+velv%C3%A6re","Barnehageassistent":"&occupationLevel1=Utdanning&occupationLevel2=Utdanning.Barnehage-+og+skolefritidsassistenter","Farmasøyt":"&q=farmas%C3%B8yt&occupationLevel1=Helse+og+sosial&occupationLevel2=Helse+og+sosial.Farmas%C3%B8ytisk+og+apotekerarbeid","Butikkmedarbeider":"&q=butikkmedarbeider&occupationLevel1=Salg+og+service&occupationLevel2=Salg+og+service.Salg%2C+butikk-+og+varehandel","Kjøkkenassistent":"&occupationLevel1=Reiseliv+og+mat&occupationLevel2=Reiseliv+og+mat.Kokk&occupationLevel2=Reiseliv+og+mat.Reiseliv%2C+hotell+og+overnatting&occupationLevel2=Reiseliv+og+mat.Restaurant&occupationLevel2=Reiseliv+og+mat.Baker+og+konditor","Lagermedarbeider":"&q=lagermedarbeider&occupationLevel1=Transport+og+lager&occupationLevel2=Transport+og+lager.Logistikk%2C+lagerarbeid+og+innkj%C3%B8p&occupationLevel2=Transport+og+lager.Truckf%C3%B8rer&occupationLevel2=Transport+og+lager.Spedit%C3%B8r+og+befrakter","Ambulansearbeider / paramedic":"&q=ambulansearbeider&occupationLevel1=Helse+og+sosial&occupationLevel1=Sikkerhet+og+beredskap&occupationLevel2=Sikkerhet+og+beredskap.Brann-%2C+utryknings-+og+redningspersonell","Økonomimedarbeider":"&q=%C3%B8konomimedarbeider&occupationLevel1=Kontor+og+%C3%B8konomi&occupationLevel2=Kontor+og+%C3%B8konomi.Kontor%2C+forvaltning+og+saksbehandling&occupationLevel2=Kontor+og+%C3%B8konomi.%C3%98konomi%2C+statistikk+og+regnskap&occupationLevel2=Kontor+og+%C3%B8konomi.Bank+finans+forsikring"};
+$("lA").href=APX[occ.value]?base+APX[occ.value]:/renhold/i.test(q)?base+"&occupationLevel1=Salg+og+service&occupationLevel2=Salg+og+service.Renholdere+og+renovasjon":base+(q?"&q="+encodeURIComponent(q):"");var FX={"Assistent i helse og omsorg":"&occupation=1.16.537&occupation=1.16.334&occupation=0.40","Farmasøyt":"&occupation=1.16.323","Butikkmedarbeider":"&occupation=0.6&q=butikkmedarbeider","Kjøkkenassistent":"&industry=53&industry=56&q=kj%C3%B8kkenassistent","Lagermedarbeider":"&occupation=1.31.229&occupation=1.31.227&occupation=1.31.226&occupation=1.31.228","Frisør":"&occupation=0.14","Økonomimedarbeider":"&occupation=0.26&occupation=0.28&occupation=1.68.189&occupation=1.68.190&occupation=1.68.191&q=%C3%B8konomimedarbeider","Ambulansearbeider / paramedic":"&industry=26&industry=49&occupation=0.57&q=ambulansearbeider"};
+$("lF").href="https://www.finn.no/job/search?location=2.20001.20015.20280"+(FX[occ.value]||(q?"&q="+encodeURIComponent(q):""));var lbl=occ.value==="Assistent i helse og omsorg"?"assistent":q;$("jobtxt").textContent=lbl?"Finn ledige stillinger som "+lbl:"Finn ledige stillinger"}
+function render(){links();var p=$("paper");p.textContent="";build().forEach(function(k){var e;
+if(k.t==="gap"){e=document.createElement("div");e.className="gap"}
+else if(k.t==="h"){e=document.createElement("h3");mark(e,k.x)}
+else if(k.t==="lines"){e=document.createElement("p");k.l.forEach(function(l,i){if(i)e.appendChild(document.createElement("br"));mark(e,l)})}
+else{e=document.createElement("p");mark(e,k.x)}
+p.appendChild(e)})}
+function mark(el,text){text.split(/(\[[^\]]+\])/).forEach(function(s){if(!s)return;if(/^\[[^\]]+\]$/.test(s)){var sp=document.createElement("span");sp.className="ph";sp.textContent=s;el.appendChild(sp)}else el.appendChild(document.createTextNode(s))})}
+document.querySelectorAll("input,textarea").forEach(function(e){e.addEventListener("input",render)});
+occ.addEventListener("change",pick);
+var msg=$("msg");
+$("dl").onclick=async function(){
+msg.textContent="";
+if(!window.docx){msg.textContent="Word-biblioteket kunne ikke lastes. Prøv å laste siden på nytt.";return}
+var dls=null;try{dls=await claude.use("downloads")}catch(e){}
+var D=window.docx,ch=[];
+function para(runs,o){o=o||{};return new D.Paragraph(Object.assign({children:runs,spacing:{after:o.after==null?160:o.after,line:276}},o.extra||{}))}
+build().forEach(function(k){
+if(k.t==="gap")ch.push(para([new D.TextRun("")],{after:120}));
+else if(k.t==="h")ch.push(para([new D.TextRun({text:k.x,bold:true,size:28})],{after:200}));
+else if(k.t==="lines"){var runs=[];k.l.forEach(function(l,i){runs.push(new D.TextRun({text:l,break:i?1:0}))});ch.push(para(runs,{after:0}))}
+else ch.push(para([new D.TextRun(k.x)]))});
+var doc=new D.Document({styles:{default:{document:{run:{font:"Calibri",size:22}}}},sections:[{properties:{page:{margin:{top:1134,bottom:1134,left:1304,right:1304}}},children:ch}]});
+try{var blob=await D.Packer.toBlob(doc);
+var fn=("Jobbsoknad_"+(v("fn")+"_"+v("ln")).replace(/[^\wæøåÆØÅ-]+/g,"_")).replace(/_+$/,"")+".docx";
+if(dls){var r=await dls.save({filename:fn,data:blob});msg.textContent=r.status==="saved"?"Lagret.":"Sendt."}else{var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fn;document.body.appendChild(a);a.click();a.remove();msg.textContent="Filen er lastet ned."}}
+catch(e){msg.textContent=e&&e.code==="declined"?"Nedlasting avbrutt.":"Kunne ikke lage filen ("+((e&&e.code)||"feil")+")."}};
+pick();
+</script>
+</body>
+</html>
