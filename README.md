@@ -1,1 +1,1 @@
-Interaktiv mal jobbsøknad, der en kan velge ulike yrker. Fung link til arbplassen/finn. Søknad i Word, nedlastbar, kan redigeres. Testet OK.
+Interaktiv mal jobbsøknad, der en kan velge ulike yrker. Fungerende linker til jobbannonser arbplassen/finn. Søknad i Word, nedlastbar, kan redigeres. Må legge til knapper Kopier tekst og nullstill skjema.
